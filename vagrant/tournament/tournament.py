@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# 
+#
 # tournament.py -- implementation of a Swiss-system tournament
 #
 
@@ -112,8 +112,13 @@ def swissPairings():
     """
     with db_connection() as (cursor, connection):
         cursor.execute("""
-            select a.id, a.name, b.id, b.name
-            from standings as a, standings as b
-            where a.wins = b.wins and a.id < b.id;
+            select id, name, wins, matches from standings order by wins desc;
         """)
-        return cursor.fetchall()
+        standings = cursor.fetchall()
+        # group query results into tuples of matched players
+        result = []
+        for counter in range(0, len(standings), 2):
+            player1 = standings[counter]
+            player2 = standings[counter + 1]
+            result.append((player1[0], player1[1], player2[0], player2[1]))
+        return result

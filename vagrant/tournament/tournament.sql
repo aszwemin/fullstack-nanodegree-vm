@@ -8,38 +8,38 @@
 
 
 -- Players table
-create table players (
-    id serial primary key,
-    name varchar(80)
+CREATE TABLE players (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(80)
 );
 
 
 -- Matches table
-create table matches (
-    winner_id int references players(id),
-    loser_id int references players(id)
+CREATE TABLE matches (
+    winner_id INT REFERENCES players(id),
+    loser_id INT REFERENCES players(id)
 );
 
 
 -- Create view for counting matches played
-create view played as
-select players.id, count(matches.winner_id) as matches
-from players left join matches
-on players.id = matches.winner_id or players.id = matches.loser_id
-group by players.id;
+CREATE VIEW played AS
+SELECT players.id, COUNT(matches.winner_id) AS matches
+FROM players LEFT JOIN matches
+ON players.id = matches.winner_id OR players.id = matches.loser_id
+GROUP BY players.id;
 
 
 -- Create view for counting matches won
-create view won as
-select players.id, count(matches.winner_id) as wins
-from players left join matches
-on players.id = matches.winner_id
-group by players.id;
+CREATE VIEW won AS
+SELECT players.id, COUNT(matches.winner_id) AS wins
+FROM players LEFT JOIN matches
+ON players.id = matches.winner_id
+GROUP BY players.id;
 
 
 -- Create view for players stats
-create view standings as
-select players.id, players.name, sum(won.wins) as wins, sum(played.matches) as matches
-from players join won on players.id = won.id join played on players.id = played.id
-group by players.id;
+CREATE VIEW standings AS
+SELECT players.id, players.name, SUM(won.wins) AS wins, SUM(played.matches) AS matches
+FROM players JOIN won ON players.id = won.id JOIN played ON players.id = played.id
+GROUP BY players.id;
 
